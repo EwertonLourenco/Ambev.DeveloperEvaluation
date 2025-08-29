@@ -1,4 +1,4 @@
-﻿namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+﻿namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Orders.TestData;
 
 using Ambev.DeveloperEvaluation.Domain.Entities;
 

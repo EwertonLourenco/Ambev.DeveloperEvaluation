@@ -1,4 +1,4 @@
-﻿namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities;
+﻿namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.Orders;
 
 using System;
 using Ambev.DeveloperEvaluation.Domain.Entities;
