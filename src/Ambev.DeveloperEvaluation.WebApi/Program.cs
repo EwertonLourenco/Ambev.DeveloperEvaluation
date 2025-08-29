@@ -70,6 +70,7 @@ public class Program
 
             app.UseBasicHealthChecks();
 
+            app.MapHealthChecks("/health");
             app.MapControllers();
 
             app.Run();
