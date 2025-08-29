@@ -56,3 +56,4 @@ services:
 volumes:
   pgdata:
   mongodata:
+  pgdata_it:  
