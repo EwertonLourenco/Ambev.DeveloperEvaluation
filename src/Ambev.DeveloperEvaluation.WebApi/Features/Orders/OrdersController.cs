@@ -16,7 +16,6 @@ using Ambev.DeveloperEvaluation.Application.Orders.DeleteOrder;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Orders;
 
-/// <summary>Controller for Orders operations</summary>
 [ApiController]
 [Route("api/[controller]")]
 public class OrdersController : BaseController
@@ -30,7 +29,6 @@ public class OrdersController : BaseController
         _mapper = mapper;
     }
 
-    /// <summary>Create a new order</summary>
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateOrderResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
@@ -42,17 +40,18 @@ public class OrdersController : BaseController
 
         var cmd = _mapper.Map<CreateOrderCommand>(request);
         var result = await _mediator.Send(cmd, ct);
-
         var resp = _mapper.Map<CreateOrderResponse>(result);
-        return CreatedAtAction(nameof(GetById), new { id = resp.Id }, new ApiResponseWithData<CreateOrderResponse>
-        {
-            Success = true,
-            Message = "Order created successfully",
-            Data = resp
-        });
+
+        // use o CreatedAtAction do ControllerBase para não re-envelopar
+        return base.CreatedAtAction(nameof(GetById), new { id = resp.Id },
+            new ApiResponseWithData<CreateOrderResponse>
+            {
+                Success = true,
+                Message = "Order created successfully",
+                Data = resp
+            });
     }
 
-    /// <summary>Get order by id</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponseWithData<GetOrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -61,15 +60,10 @@ public class OrdersController : BaseController
         var result = await _mediator.Send(new GetOrderQuery(id), ct);
         var resp = _mapper.Map<GetOrderResponse>(result);
 
-        return Ok(new ApiResponseWithData<GetOrderResponse>
-        {
-            Success = true,
-            Message = string.Empty,
-            Data = resp
-        });
+        // devolve o DTO puro; BaseController fará o envelope 1x
+        return Ok(resp);
     }
 
-    /// <summary>List orders with paging/sorting/filter</summary>
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponseWithData<ListOrdersResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> List([FromQuery] ListOrdersRequest request, CancellationToken ct)
@@ -78,15 +72,9 @@ public class OrdersController : BaseController
         var result = await _mediator.Send(query, ct);
         var resp = _mapper.Map<ListOrdersResponse>(result);
 
-        return Ok(new ApiResponseWithData<ListOrdersResponse>
-        {
-            Success = true,
-            Message = string.Empty,
-            Data = resp
-        });
+        return Ok(resp);
     }
 
-    /// <summary>Update an existing order</summary>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateOrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
@@ -102,15 +90,9 @@ public class OrdersController : BaseController
         var result = await _mediator.Send(cmd, ct);
         var resp = _mapper.Map<UpdateOrderResponse>(result);
 
-        return Ok(new ApiResponseWithData<UpdateOrderResponse>
-        {
-            Success = true,
-            Message = "Order updated successfully",
-            Data = resp
-        });
+        return Ok(resp);
     }
 
-    /// <summary>Delete an order</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
