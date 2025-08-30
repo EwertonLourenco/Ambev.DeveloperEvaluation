@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Ambev.DeveloperEvaluation.ORM;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
@@ -21,6 +22,7 @@ public class Program
             Log.Information("Starting web application");
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
             builder.AddDefaultLogging();
 
             builder.Services.AddControllers();
@@ -55,19 +57,31 @@ public class Program
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
-            if (app.Environment.IsDevelopment())
+            // Habilita Swagger no container (independe do ambiente)
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ambev Developer Evaluation API v1");
+                // Se quiser o Swagger na raiz em vez de /swagger:
+                // c.RoutePrefix = string.Empty;
+            });
 
-            app.UseHttpsRedirection();
+            // Se manter o Swagger em /swagger, redirecione a raiz:
+            app.MapGet("/", () => Results.Redirect("/swagger"))
+               .ExcludeFromDescription();
+
+            // Se você usa HTTPS Redirection, evite no container (não há cert por padrão)
+            if (!app.Environment.IsEnvironment("Docker") && !app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseBasicHealthChecks();
 
+            app.MapHealthChecks("/health");
             app.MapControllers();
 
             app.Run();
