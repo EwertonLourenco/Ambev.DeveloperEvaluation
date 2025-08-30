@@ -21,7 +21,7 @@ services:
       - ambev.developerevaluation.database
       - ambev.developerevaluation.nosql
       - ambev.developerevaluation.cache
-
+    
   ambev.developerevaluation.database:
     container_name: ambev_developer_evaluation_database
     image: postgres:16-alpine
@@ -54,6 +54,17 @@ services:
     ports:
       - "6379:6379"
     restart: unless-stopped
+
+  ambev.developerevaluation.ui:
+    build:
+      context: src/Ambev.DeveloperEvaluation.UI
+      dockerfile: Dockerfile
+    depends_on:
+      - ambev.developerevaluation.webapi
+    environment:
+      - API_BASE_URL=http://localhost:8080
+    ports:
+      - "80:80"
 
 volumes:
   pgdata:

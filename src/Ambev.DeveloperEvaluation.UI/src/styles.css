@@ -1,0 +1,235 @@
+:root {
+  --bg: #0b0c10;
+  --panel: #111218;
+  --muted: #9aa3b2;
+  --text: #e7eaf0;
+  --brand: #5b8cff;
+  --brand-2: #8b5bff;
+  --ok: #11b981;
+  --warn: #f59e0b;
+  --err: #ef4444;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+* {
+  box-sizing: border-box
+}
+
+html, body {
+  height: 100%
+}
+
+body {
+  margin: 0;
+  font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(1100px 500px at -20% -20%, rgba(91,140,255,.12) 0%, transparent 60%), radial-gradient(1000px 500px at 120% -30%, rgba(139,91,255,.10) 0%, transparent 60%), var(--bg);
+}
+
+/* layout */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(17,18,24,.6);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 20px
+}
+
+  .nav .brand {
+    font-weight: 700;
+    letter-spacing: .3px
+  }
+
+  .nav a {
+    color: var(--text);
+    text-decoration: none;
+    opacity: .8
+  }
+
+    .nav a.active, .nav a:hover {
+      opacity: 1
+    }
+
+.spacer {
+  margin-left: auto
+}
+
+/* cards / grid */
+.grid {
+  display: grid;
+  gap: 16px
+}
+
+@media (min-width: 820px) {
+  .grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.card {
+  grid-column: span 12;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+@media (min-width: 820px) {
+  .span-4 {
+    grid-column: span 4
+  }
+
+  .span-6 {
+    grid-column: span 6
+  }
+
+  .span-8 {
+    grid-column: span 8
+  }
+}
+
+.card h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px
+}
+
+.muted {
+  color: var(--muted)
+}
+
+.kpi {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 10px 0
+}
+
+.btn {
+  appearance: none;
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #222432;
+  color: var(--text);
+  cursor: pointer;
+}
+
+  .btn:hover {
+    filter: brightness(1.06)
+  }
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--brand), var(--brand-2))
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15)
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,.15)
+}
+
+  .badge.ok {
+    color: #0f5132;
+    border-color: #0f5132;
+    background: rgba(17,185,129,.15)
+  }
+
+  .badge.err {
+    color: #7f1d1d;
+    border-color: #7f1d1d;
+    background: rgba(239,68,68,.15)
+  }
+
+/* tables/inputs básicos caso use na home */
+.input, .select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: #161822;
+  color: var(--text)
+}
+
+
+.auth-card {
+  max-width: 420px;
+  margin: 48px auto 0; /* centraliza horizontal + afasta do topo */
+}
+
+  .auth-card h2 {
+    margin: 0 0 12px 0
+  }
+
+  .auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+
+.auth-actions {
+  display: flex;
+  gap: 10px
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 12px
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0
+}
+
+  .table th, .table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,.08)
+  }
+
+  .table th {
+    font-weight: 600;
+    color: var(--muted)
+  }
+
+.row-actions {
+  display: flex;
+  gap: 8px
+}
+
+.badge.small {
+  font-size: 11px;
+  padding: 2px 6px
+}
+
+/* forms inline */
+.inline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap
+}

@@ -1,0 +1,39 @@
+<section class="container grid">
+  <div class="card span-6">
+    <h3>Novo usuário</h3>
+    <div class="inline">
+      <input class="input" placeholder="Username" [(ngModel)]="create.username">
+      <input class="input" placeholder="Senha" type="password" [(ngModel)]="create.password">
+    </div>
+    <div class="inline" style="margin-top:8px">
+      <input class="input" placeholder="Telefone" [(ngModel)]="create.phone">
+      <input class="input" placeholder="Email" type="email" [(ngModel)]="create.email">
+    </div>
+    <div class="inline" style="margin-top:8px">
+      <select class="select" [(ngModel)]="create.status">
+        <option [ngValue]="0">Inactive</option>
+        <option [ngValue]="1">Active</option>
+      </select>
+      <select class="select" [(ngModel)]="create.role">
+        <option [ngValue]="0">User</option>
+        <option [ngValue]="1">Admin</option>
+      </select>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" (click)="doCreate()" [disabled]="loadingCreate">
+        {{ loadingCreate ? 'Enviando...' : 'Criar Usuário' }}
+      </button>
+    </div>
+    <p class="muted" style="margin-top:8px">{{ createMsg }}</p>
+  </div>
+
+  <div class="card span-6">
+    <h3>Buscar usuário</h3>
+    <div class="inline">
+      <input class="input" placeholder="ID" [(ngModel)]="userId">
+      <button class="btn" (click)="getById()" [disabled]="loadingGet">
+        {{ loadingGet ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+    <pre class="muted" style="margin-top:10px;white-space:pre-wrap">{{ userJson }}</pre>
+  </div>
+</section>
