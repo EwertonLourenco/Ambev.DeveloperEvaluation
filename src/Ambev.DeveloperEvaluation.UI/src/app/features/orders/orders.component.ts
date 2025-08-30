@@ -19,11 +19,23 @@ export class OrdersComponent implements OnInit {
 
   creating = false;
   customerName = '';
-  discountPercent = 0;
-  newItems = [{ description: '', unitPrice: 0, quantity: 1 }];
+  discountPercent: number | null = null;
+  newItems: { description: string; unitPrice: number | null; quantity: number | null }[] = [
+    { description: '', unitPrice: null, quantity: null },
+  ];
 
   constructor(private api: OrdersService, private router: Router) { }
   ngOnInit() { this.load(); }
+
+  toggleCreate() {
+    this.creating = !this.creating;
+    if (this.creating) this.resetNewForm();
+  }
+
+  resetNewForm() {
+    this.discountPercent = null;
+    this.newItems = [{ description: '', unitPrice: null, quantity: null }];
+  }
 
   load() {
     this.loading = true;
@@ -51,19 +63,37 @@ export class OrdersComponent implements OnInit {
   addItem() { this.newItems.push({ description: '', unitPrice: 0, quantity: 1 }); }
   removeItem(i: number) { this.newItems.splice(i, 1); }
 
-  get newSubtotal() { return this.newItems.reduce((s, it) => s + (+it.unitPrice || 0) * (+it.quantity || 0), 0); }
-  get newDiscountAmount() { return (this.newSubtotal * (+this.discountPercent || 0)) / 100; }
-  get newTotal() { return this.newSubtotal - this.newDiscountAmount; }
+  get newSubtotal() {
+    return this.newItems.reduce((s, it) => s + (+(it.unitPrice ?? 0) * +(it.quantity ?? 0)), 0);
+  }
+  get newDiscountAmount() {
+    return (this.newSubtotal * +(this.discountPercent ?? 0)) / 100;
+  }
+  get newTotal() {
+    return this.newSubtotal - this.newDiscountAmount;
+  }
 
   create() {
+    const items = this.newItems
+      .map(i => ({
+        description: (i.description ?? '').trim(),
+        unitPrice: +(i.unitPrice ?? 0),
+        quantity: +(i.quantity ?? 0)
+      }))
+      .filter(i => i.description && i.unitPrice > 0 && i.quantity > 0);
+
     const body = {
-      customerName: this.customerName || undefined,
-      discountPercent: +this.discountPercent || 0,
-      items: this.newItems.filter(i => i.description?.trim())
+      discountPercent: +(this.discountPercent ?? 0),
+      items
     };
+
     this.api.create(body).subscribe({
-      next: _ => { this.creating = false; this.customerName = ''; this.discountPercent = 0; this.newItems = [{ description: '', unitPrice: 0, quantity: 1 }]; this.load(); },
-      error: (err) => { console.error('[OrdersComponent] create error', err); alert('Falha ao criar pedido'); }
+      next: _ => {
+        this.creating = false;
+        this.resetNewForm();
+        this.load();
+      },
+      error: _ => alert('Falha ao criar pedido')
     });
   }
 

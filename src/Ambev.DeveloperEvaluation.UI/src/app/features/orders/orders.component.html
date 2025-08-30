@@ -10,7 +10,7 @@
       </select>
       <button class="btn" (click)="load()">Atualizar</button>
       <span class="spacer"></span>
-      <button class="btn btn-primary" (click)="creating = !creating">
+      <button class="btn btn-primary" (click)="toggleCreate()">
         {{ creating ? 'Fechar' : 'Novo Pedido' }}
       </button>
     </div>
@@ -21,7 +21,6 @@
 
     <div *ngIf="creating" class="card" style="margin:8px 0">
       <div class="inline" style="margin-bottom:8px">
-        <input class="input" style="min-width:220px" placeholder="Cliente (opcional)" [(ngModel)]="customerName">
         <input class="input" style="width:120px" type="number" placeholder="Desconto %"
                [(ngModel)]="discountPercent">
       </div>
@@ -49,7 +48,6 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Cliente</th>
           <th>Criado em</th>
           <th style="text-align:right">Subtotal</th>
           <th style="text-align:right">Desconto</th>
@@ -60,7 +58,6 @@
       <tbody>
         <tr *ngFor="let o of data.items">
           <td>{{ o.id }}</td>
-          <td>{{ o.customerName || '-' }}</td>
           <td>{{ o.createdAt | date:'short' }}</td>
           <td style="text-align:right">{{ o.subtotal | number:'1.2-2' }}</td>
           <td style="text-align:right">
