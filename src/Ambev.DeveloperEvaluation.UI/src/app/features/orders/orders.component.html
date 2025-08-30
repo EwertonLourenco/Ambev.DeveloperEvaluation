@@ -1,0 +1,40 @@
+<h2>Orders</h2>
+
+<form (ngSubmit)="load()" style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+  <input [(ngModel)]="search" name="search" placeholder="Search description">
+  <select [(ngModel)]="pageSize" name="pageSize">
+    <option [value]="5">5</option>
+    <option [value]="10">10</option>
+    <option [value]="20">20</option>
+  </select>
+  <button type="submit">Buscar</button>
+  <button type="button" (click)="openCreate()">Novo Pedido</button>
+</form>
+
+<table border="1" width="100%">
+  <thead>
+    <tr><th>ID</th><th>Subtotal</th><th>Desconto</th><th>Total</th><th>Criado em</th><th></th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let o of items">
+      <td>{{o.id}}</td>
+      <td>{{o.subtotal | number:'1.2-2'}}</td>
+      <td>{{o.discountPercent}}% ({{o.discountAmount | number:'1.2-2'}})</td>
+      <td>{{o.total | number:'1.2-2'}}</td>
+      <td>{{o.createdAt | date:'short'}}</td>
+      <td><a [routerLink]="['/orders', o.id]">Abrir</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="creating" style="margin-top:16px;border:1px solid #ddd;padding:12px">
+  <h3>Novo pedido</h3>
+  <div *ngFor="let it of newItems; let i=index" style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+    <input [(ngModel)]="newItems[i].description" name="desc{{i}}" placeholder="Descrição">
+    <input type="number" [(ngModel)]="newItems[i].unitPrice" name="price{{i}}" placeholder="Preço">
+    <input type="number" [(ngModel)]="newItems[i].quantity" name="qty{{i}}" placeholder="Qtd">
+    <button type="button" (click)="removeItem(i)">Remover</button>
+  </div>
+  <button type="button" (click)="addItem()">Adicionar item</button>
+  <button type="button" (click)="saveNew()">Salvar</button>
+</div>

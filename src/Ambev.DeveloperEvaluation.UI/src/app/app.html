@@ -1,0 +1,12 @@
+<header style="padding:12px;border-bottom:1px solid #eee;display:flex;gap:16px;align-items:center">
+  <strong>Ambev Developer Evaluation</strong>
+  <a routerLink="/orders" routerLinkActive="active">Orders</a>
+  <a routerLink="/users" routerLinkActive="active">Users</a>
+  <span style="margin-left:auto"></span>
+  <a routerLink="/login">Login</a>
+  <button (click)="logout()">Logout</button>
+</header>
+
+<main>
+  <router-outlet></router-outlet>
+</main>

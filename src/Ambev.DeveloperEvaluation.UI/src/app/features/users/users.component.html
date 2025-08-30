@@ -1,0 +1,30 @@
+<h2>Users</h2>
+
+<section>
+  <h3>Create</h3>
+  <form (ngSubmit)="submitCreate()" style="display:flex;gap:8px;flex-direction:column;max-width:320px">
+    <label>Username</label><input [(ngModel)]="create.username" name="username"><br>
+    <label>Password</label><input [(ngModel)]="create.password" name="password" type="password"><br>
+    <label>Phone</label><input [(ngModel)]="create.phone" name="phone"><br>
+    <label>Email</label><input [(ngModel)]="create.email" name="email" type="email"><br>
+    <label>Status</label>
+    <select [(ngModel)]="create.status" name="status">
+      <option [ngValue]="0">Inactive</option>
+      <option [ngValue]="1">Active</option>
+    </select>
+    <label>Role</label>
+    <select [(ngModel)]="create.role" name="role">
+      <option [ngValue]="0">User</option>
+      <option [ngValue]="1">Admin</option>
+    </select>
+    <button type="submit">Create</button>
+    <p *ngIf="createMsg">{{createMsg}}</p>
+  </form>
+</section>
+
+<section style="margin-top:24px">
+  <h3>Get by ID</h3>
+  <label>User Id</label><br><input [(ngModel)]="userId" name="userId" type="number"><br><br>
+  <button (click)="loadUser()">Load</button>
+  <pre *ngIf="userJson">{{userJson}}</pre>
+</section>

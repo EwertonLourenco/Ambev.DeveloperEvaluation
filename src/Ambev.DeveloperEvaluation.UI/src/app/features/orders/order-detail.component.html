@@ -1,0 +1,13 @@
+<h2>Pedido {{id}}</h2>
+<div *ngIf="order">
+  <p>Subtotal: {{order.subtotal | number:'1.2-2'}}</p>
+  <p>Desconto: {{order.discountPercent}}% ({{order.discountAmount | number:'1.2-2'}})</p>
+  <p>Total: {{order.total | number:'1.2-2'}}</p>
+  <h3>Itens</h3>
+  <div *ngFor="let it of order.items; let i=index" style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+    <input [(ngModel)]="order.items[i].description" placeholder="Descrição">
+    <input type="number" [(ngModel)]="order.items[i].unitPrice" placeholder="Preço">
+    <input type="number" [(ngModel)]="order.items[i].quantity" placeholder="Qtd">
+  </div>
+  <button (click)="save()">Salvar</button>
+</div>
