@@ -1,40 +1,89 @@
-<h2>Orders</h2>
+<section class="container">
+  <div class="card">
+    <div class="toolbar">
+      <input class="input" style="min-width:240px" placeholder="Buscar descrição..."
+             [(ngModel)]="search" (keyup.enter)="load()">
+      <select class="select" style="width:120px" [(ngModel)]="pageSize" (change)="load()">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+      <button class="btn" (click)="load()">Atualizar</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" (click)="creating = !creating">
+        {{ creating ? 'Fechar' : 'Novo Pedido' }}
+      </button>
+    </div>
 
-<form (ngSubmit)="load()" style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-  <input [(ngModel)]="search" name="search" placeholder="Search description">
-  <select [(ngModel)]="pageSize" name="pageSize">
-    <option [value]="5">5</option>
-    <option [value]="10">10</option>
-    <option [value]="20">20</option>
-  </select>
-  <button type="submit">Buscar</button>
-  <button type="button" (click)="openCreate()">Novo Pedido</button>
-</form>
+    <div *ngIf="errorMsg" class="card" style="margin:8px 0; border-color: rgba(239,68,68,.4)">
+      <strong>Erro:</strong> <span class="muted">{{ errorMsg }}</span>
+    </div>
 
-<table border="1" width="100%">
-  <thead>
-    <tr><th>ID</th><th>Subtotal</th><th>Desconto</th><th>Total</th><th>Criado em</th><th></th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let o of items">
-      <td>{{o.id}}</td>
-      <td>{{o.subtotal | number:'1.2-2'}}</td>
-      <td>{{o.discountPercent}}% ({{o.discountAmount | number:'1.2-2'}})</td>
-      <td>{{o.total | number:'1.2-2'}}</td>
-      <td>{{o.createdAt | date:'short'}}</td>
-      <td><a [routerLink]="['/orders', o.id]">Abrir</a></td>
-    </tr>
-  </tbody>
-</table>
+    <div *ngIf="creating" class="card" style="margin:8px 0">
+      <div class="inline" style="margin-bottom:8px">
+        <input class="input" style="min-width:220px" placeholder="Cliente (opcional)" [(ngModel)]="customerName">
+        <input class="input" style="width:120px" type="number" placeholder="Desconto %"
+               [(ngModel)]="discountPercent">
+      </div>
 
-<div *ngIf="creating" style="margin-top:16px;border:1px solid #ddd;padding:12px">
-  <h3>Novo pedido</h3>
-  <div *ngFor="let it of newItems; let i=index" style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-    <input [(ngModel)]="newItems[i].description" name="desc{{i}}" placeholder="Descrição">
-    <input type="number" [(ngModel)]="newItems[i].unitPrice" name="price{{i}}" placeholder="Preço">
-    <input type="number" [(ngModel)]="newItems[i].quantity" name="qty{{i}}" placeholder="Qtd">
-    <button type="button" (click)="removeItem(i)">Remover</button>
+      <div *ngFor="let it of newItems; let i = index" class="inline">
+        <input class="input" style="flex:1" placeholder="Descrição" [(ngModel)]="newItems[i].description">
+        <input class="input" style="width:140px" type="number" placeholder="Preço" [(ngModel)]="newItems[i].unitPrice">
+        <input class="input" style="width:120px" type="number" placeholder="Qtd" [(ngModel)]="newItems[i].quantity">
+        <button class="btn" (click)="removeItem(i)" *ngIf="newItems.length>1">Remover</button>
+      </div>
+
+      <div class="inline" style="margin-top:10px">
+        <button class="btn" (click)="addItem()">Adicionar item</button>
+        <span class="spacer"></span>
+        <span class="badge small">Subtotal: {{ newSubtotal | number:'1.2-2' }}</span>
+        <span class="badge small">Desc.: {{ newDiscountAmount | number:'1.2-2' }}</span>
+        <span class="badge small">Total: {{ newTotal | number:'1.2-2' }}</span>
+        <button class="btn btn-primary" (click)="create()">Salvar</button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="muted">Carregando...</div>
+
+    <table class="table" *ngIf="!loading && data?.items?.length">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Criado em</th>
+          <th style="text-align:right">Subtotal</th>
+          <th style="text-align:right">Desconto</th>
+          <th style="text-align:right">Total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of data.items">
+          <td>{{ o.id }}</td>
+          <td>{{ o.customerName || '-' }}</td>
+          <td>{{ o.createdAt | date:'short' }}</td>
+          <td style="text-align:right">{{ o.subtotal | number:'1.2-2' }}</td>
+          <td style="text-align:right">
+            {{ o.discountPercent ?? 0 }}% ({{ o.discountAmount | number:'1.2-2' }})
+          </td>
+          <td style="text-align:right">{{ o.total | number:'1.2-2' }}</td>
+          <td class="row-actions">
+            <button class="btn btn-outline" (click)="openDetail(o.id!)">Editar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && !data?.items?.length" class="muted">Nenhum pedido encontrado.</div>
+
+    <!-- paginação -->
+    <div class="inline" style="margin-top:12px" *ngIf="!loading && (data?.totalPages ?? 0) > 1">
+      <button class="btn" (click)="prev()" [disabled]="data.currentPage <= 1">Anterior</button>
+      <span class="badge small">Página {{ data.currentPage }} de {{ data.totalPages }}</span>
+      <button class="btn" (click)="next()" [disabled]="!data.hasNext">Próxima</button>
+
+      <span class="spacer"></span>
+      <span class="muted">Total: {{ data.totalCount }}</span>
+    </div>
   </div>
-  <button type="button" (click)="addItem()">Adicionar item</button>
-  <button type="button" (click)="saveNew()">Salvar</button>
-</div>
+</section>

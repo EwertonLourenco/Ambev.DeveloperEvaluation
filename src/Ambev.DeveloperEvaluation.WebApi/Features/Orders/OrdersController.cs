@@ -80,7 +80,11 @@ public class OrdersController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateOrderRequest request, CancellationToken ct)
     {
-        if (request.Id != id) return BadRequest(ApiResponse.Error("Route id and payload id must match."));
+        // Se o corpo não enviou Id, use o da rota
+        if (request.Id == Guid.Empty)
+            request.Id = id;
+        else if (request.Id != id)
+            return BadRequest(ApiResponse.Error("Route id and payload id must match."));
 
         var validator = new UpdateOrderRequestValidator();
         var validation = await validator.ValidateAsync(request, ct);

@@ -1,10 +1,15 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { API_BASE_URL } from '../env';
 
 export const BaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
+  const base = (window as any).__env?.API_BASE_URL ?? 'http://localhost:8080';
+
+  // já absoluta? segue
   if (/^https?:\/\//i.test(req.url)) {
-    return next(req); // já é absoluta
+    console.debug('[HTTP passthrough]', req.method, req.url);
+    return next(req);
   }
-  const url = API_BASE_URL.replace(/\/$/, '') + '/' + req.url.replace(/^\//, '');
+
+  const url = base.replace(/\/$/, '') + '/' + req.url.replace(/^\//, '');
+  console.debug('[HTTP]', req.method, url, { headers: req.headers.keys() });
   return next(req.clone({ url }));
 };

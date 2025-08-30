@@ -52,7 +52,34 @@ public class OrderRepository : IOrderRepository
 
     public async Task UpdateAsync(Order order, CancellationToken ct = default)
     {
-        _ctx.Orders.Update(order);
+        var db = await _ctx.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == order.Id, ct)
+            ?? throw new KeyNotFoundException("Order not found");
+
+        _ctx.Entry(db).CurrentValues.SetValues(order);
+
+        foreach (var dbItem in db.Items.ToList())
+        {
+            if (!order.Items.Any(i => i.Id == dbItem.Id))
+                _ctx.Remove(dbItem); // Deleted
+        }
+
+        foreach (var it in order.Items)
+        {
+            var existing = db.Items.FirstOrDefault(x => x.Id == it.Id);
+
+            if (existing == null) // novo item
+            {
+                it.OrderId = db.Id;
+                _ctx.Add(it); // Added
+            }
+            else // item existente -> atualiza valores
+            {
+                _ctx.Entry(existing).CurrentValues.SetValues(it); // Modified
+            }
+        }
+
         await _ctx.SaveChangesAsync(ct);
     }
 

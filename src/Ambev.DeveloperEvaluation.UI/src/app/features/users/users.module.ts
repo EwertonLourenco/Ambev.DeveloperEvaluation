@@ -1,10 +1,14 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { UsersComponent } from './users.component';
 
-const routes: Routes = [{ path: '', component: UsersComponent }];
-
 @NgModule({
-  imports: [UsersComponent, RouterModule.forChild(routes)]
+  imports: [
+    CommonModule, FormsModule,
+    RouterModule.forChild([{ path: '', component: UsersComponent }])
+  ],
+  declarations: [UsersComponent]
 })
 export class UsersModule { }

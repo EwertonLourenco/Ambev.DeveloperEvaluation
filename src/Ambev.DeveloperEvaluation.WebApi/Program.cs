@@ -25,6 +25,21 @@ public class Program
 
             builder.AddDefaultLogging();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("dev", policy =>
+                {
+                    policy
+                        .WithOrigins(
+                            "http://localhost:4200",
+                            "http://127.0.0.1:4200"
+                        )
+                        .AllowAnyHeader()    // inclui Authorization, Content-Type etc
+                        .AllowAnyMethod();   // GET/POST/PUT/DELETE/OPTIONS
+                                             // .AllowCredentials(); // só se usar cookies/session (não precisa p/ Bearer)
+                });
+            });
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
@@ -76,6 +91,7 @@ public class Program
                 app.UseHttpsRedirection();
             }
 
+            app.UseCors("dev");
             app.UseAuthentication();
             app.UseAuthorization();
 

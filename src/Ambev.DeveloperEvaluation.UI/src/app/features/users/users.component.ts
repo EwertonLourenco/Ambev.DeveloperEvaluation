@@ -1,36 +1,39 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { UsersService, CreateUser } from './users.service';
+import { UsersService, UserCreate } from './users.service';
 
 @Component({
   selector: 'app-users',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './users.component.html',
+  standalone: false
 })
 export class UsersComponent {
-  create: CreateUser = { username: '', password: '', status: 1, role: 0, email: '', phone: '' };
+  // criar
+  create: UserCreate = { username: '', password: '', phone: '', email: '', status: 1, role: 0 };
   createMsg = '';
-  userId: number | null = null;
+
+  // buscar
+  userId: string | number = '';
   userJson = '';
 
-  constructor(private users: UsersService) { }
+  loadingCreate = false;
+  loadingGet = false;
 
-  submitCreate() {
-    this.createMsg = '';
-    this.users.create(this.create).subscribe({
-      next: () => (this.createMsg = 'Usuário criado.'),
-      error: () => (this.createMsg = 'Erro ao criar usuário.')
+  constructor(private api: UsersService) { }
+
+  doCreate() {
+    this.loadingCreate = true; this.createMsg = '';
+    this.api.create(this.create).subscribe({
+      next: r => { this.loadingCreate = false; this.createMsg = 'Usuário criado com sucesso.'; },
+      error: _ => { this.loadingCreate = false; this.createMsg = 'Falha ao criar.'; }
     });
   }
 
-  loadUser() {
-    this.userJson = '';
-    if (this.userId == null) return;
-    this.users.getById(this.userId).subscribe({
-      next: (u) => (this.userJson = JSON.stringify(u, null, 2)),
-      error: () => (this.userJson = 'Erro ao buscar usuário.')
+  getById() {
+    if (!this.userId) { this.userJson = 'Informe o ID'; return; }
+    this.loadingGet = true; this.userJson = '';
+    this.api.getById(this.userId).subscribe({
+      next: r => { this.loadingGet = false; this.userJson = JSON.stringify(r, null, 2); },
+      error: _ => { this.loadingGet = false; this.userJson = 'Não encontrado.'; }
     });
   }
 }
