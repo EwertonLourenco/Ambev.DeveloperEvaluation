@@ -1,5 +1,3 @@
-console.log('MAIN LOADED'); // <— tem que aparecer no console
-
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';

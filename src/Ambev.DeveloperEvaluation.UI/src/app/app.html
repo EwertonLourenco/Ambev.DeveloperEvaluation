@@ -1,12 +1,13 @@
-<header style="padding:12px;border-bottom:1px solid #eee;display:flex;gap:16px;align-items:center">
-  <strong>Ambev Developer Evaluation</strong>
-  <a routerLink="/orders" routerLinkActive="active">Orders</a>
-  <a routerLink="/users" routerLinkActive="active">Users</a>
-  <span style="margin-left:auto"></span>
-  <a routerLink="/login">Login</a>
-  <button (click)="logout()">Logout</button>
+<header class="header">
+  <nav class="nav container">
+    <span class="brand">Ambev Developer Evaluation</span>
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/orders" routerLinkActive="active">Orders</a>
+    <a routerLink="/users" routerLinkActive="active">Users</a>
+    <span class="spacer"></span>
+    <a routerLink="/login">Login</a>
+    <button class="btn btn-outline" (click)="logout()">Logout</button>
+  </nav>
 </header>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
+<router-outlet></router-outlet>

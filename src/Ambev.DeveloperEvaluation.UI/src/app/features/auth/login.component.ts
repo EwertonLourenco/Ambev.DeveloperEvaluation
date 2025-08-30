@@ -1,33 +1,37 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
+  // garante não-standalone, pois é declarado no AuthModule
+  standalone: false
 })
 export class LoginComponent {
   email = '';
   password = '';
   error = '';
 
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
-  submit() {
+  login() {
     this.error = '';
-    this.auth.login(this.email, this.password).subscribe({
-      next: (resp) => {
-        if (this.auth.saveToken(resp)) {
-          this.router.navigateByUrl('/orders');
-        } else {
-          this.error = 'Credenciais inválidas';
+    const body = { email: this.email, password: this.password };
+
+    this.http.post<any>('/api/Auth', body).subscribe({
+      next: (res) => {
+        const token = res?.token ?? res?.data?.token;
+        if (!token) {
+          this.error = 'Resposta inválida da API.';
+          return;
         }
+        localStorage.setItem('token', token);
+        this.router.navigateByUrl('/home');
       },
-      error: () => (this.error = 'Falha no login'),
+      error: (err) => {
+        this.error = err?.error?.message ?? 'Falha no login.';
+      }
     });
   }
 }
