@@ -31,8 +31,14 @@ public class Program
                 {
                     policy
                         .WithOrigins(
-                            "http://localhost:4200",
-                            "http://127.0.0.1:4200"
+                            "http://localhost",        // UI em Docker (porta 80)
+                            "http://localhost:80",
+                            "http://127.0.0.1",
+                            "http://127.0.0.1:80",
+                            "http://localhost:4200",   // ng serve
+                            "http://127.0.0.1:4200",
+                            "http://localhost:8080",
+                            "http://127.0.0.1:8080"
                         )
                         .AllowAnyHeader()    // inclui Authorization, Content-Type etc
                         .AllowAnyMethod();   // GET/POST/PUT/DELETE/OPTIONS
